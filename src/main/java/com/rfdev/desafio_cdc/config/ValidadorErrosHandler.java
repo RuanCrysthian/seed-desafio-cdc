@@ -48,5 +48,10 @@ public class ValidadorErrosHandler {
         return buildRespostaErro(HttpStatus.BAD_REQUEST, "Violação de restrições", messages);
     }
 
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<RespostaErro> handleIllegalArgumentException(IllegalArgumentException ex) {
+        return buildRespostaErro(HttpStatus.BAD_REQUEST, "Argumento ilegal", List.of(ex.getMessage()));
+    }
+
 
 }
