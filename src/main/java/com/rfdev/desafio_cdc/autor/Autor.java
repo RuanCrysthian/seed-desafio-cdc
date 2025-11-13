@@ -1,5 +1,6 @@
 package com.rfdev.desafio_cdc.autor;
 
+import com.rfdev.desafio_cdc.config.CampoUnico;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
