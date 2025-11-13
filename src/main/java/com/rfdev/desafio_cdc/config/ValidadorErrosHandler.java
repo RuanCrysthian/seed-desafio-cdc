@@ -1,5 +1,6 @@
 package com.rfdev.desafio_cdc.config;
 
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.context.MessageSource;
@@ -51,6 +52,11 @@ public class ValidadorErrosHandler {
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<RespostaErro> handleIllegalArgumentException(IllegalArgumentException ex) {
         return buildRespostaErro(HttpStatus.BAD_REQUEST, "Argumento ilegal", List.of(ex.getMessage()));
+    }
+
+    @ExceptionHandler(EntityNotFoundException.class)
+    public ResponseEntity<RespostaErro> handleEntityNotFoundException(EntityNotFoundException ex) {
+        return buildRespostaErro(HttpStatus.NOT_FOUND, "Entidade não encontrada", List.of(ex.getMessage()));
     }
 
 
