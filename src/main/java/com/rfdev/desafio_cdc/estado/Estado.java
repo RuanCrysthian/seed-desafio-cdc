@@ -15,13 +15,16 @@ public class Estado {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
+    @Column(name = "estado_id", updatable = false, nullable = false)
     private UUID id;
 
     @NotBlank
+    @Column(name = "nome", nullable = false)
     private String nome;
 
     @NotNull
     @ManyToOne
+    @JoinColumn(name = "pais_id", nullable = false)
     private Pais pais;
 
     @Deprecated
@@ -31,5 +34,9 @@ public class Estado {
     public Estado(@NotBlank String nome, @NotNull Pais pais) {
         this.nome = nome;
         this.pais = pais;
+    }
+
+    public Boolean pertenceAoPais(Pais pais) {
+        return this.pais.equals(pais);
     }
 }

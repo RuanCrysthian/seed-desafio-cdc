@@ -51,11 +51,13 @@ public class Livro {
     private LocalDateTime dataPublicacao;
 
     @NotNull
-    @OneToOne
+    @ManyToOne
+    @JoinColumn(name = "categoria_id", nullable = false)
     private Categoria categoria;
 
     @NotNull
-    @OneToOne
+    @ManyToOne
+    @JoinColumn(name = "autor_id", nullable = false)
     private Autor autor;
 
     @Deprecated
