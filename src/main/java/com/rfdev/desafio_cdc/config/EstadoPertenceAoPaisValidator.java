@@ -25,11 +25,11 @@ public class EstadoPertenceAoPaisValidator implements Validator {
 
         RealizaPagamentoRequest request = (RealizaPagamentoRequest) target;
 
-        if (request.estadoId() != null) {
+        if (request.getEstadoId() != null) {
             Long count = entityManager.createQuery(
                     "SELECT COUNT(e) FROM Estado e WHERE e.id = :estadoId AND e.pais.id = :paisId", Long.class)
-                .setParameter("estadoId", request.estadoId())
-                .setParameter("paisId", request.paisId())
+                .setParameter("estadoId", request.getEstadoId())
+                .setParameter("paisId", request.getPaisId())
                 .getSingleResult();
 
             if (count == 0) {

@@ -35,8 +35,4 @@ public class Estado {
         this.nome = nome;
         this.pais = pais;
     }
-
-    public Boolean pertenceAoPais(Pais pais) {
-        return this.pais.equals(pais);
-    }
 }

@@ -42,7 +42,7 @@ INSERT INTO livros (livro_id, titulo, resumo, sumario, preco, numero_paginas, is
  'Java: Guia Completo para Desenvolvimento',
  'Um guia abrangente sobre desenvolvimento Java, cobrindo desde conceitos básicos até arquiteturas avançadas. Inclui exemplos práticos e projetos reais para consolidar o aprendizado.',
  'Capítulo 1: Introdução ao Java\nCapítulo 2: Orientação a Objetos\nCapítulo 3: Coleções e Streams\nCapítulo 4: Spring Framework\nCapítulo 5: Testes e Qualidade\nCapítulo 6: Deploy e Produção',
- 89.90, 450, '978-85-1234-567-8', '2025-12-15 10:00:00',
+ 90.00, 450, '978-85-1234-567-8', '2025-12-15 10:00:00',
  '550e8400-e29b-41d4-a716-446655442001', '550e8400-e29b-41d4-a716-446655443001'),
 
 ('550e8400-e29b-41d4-a716-446655444002',
@@ -56,7 +56,7 @@ INSERT INTO livros (livro_id, titulo, resumo, sumario, preco, numero_paginas, is
  'Arquitetura de Microsserviços na Prática',
  'Guia prático para implementação de arquiteturas de microsserviços, incluindo padrões, ferramentas e casos de uso reais em ambientes de produção.',
  'Capítulo 1: Conceitos de Microsserviços\nCapítulo 2: Design Patterns\nCapítulo 3: API Gateway\nCapítulo 4: Service Discovery\nCapítulo 5: Monitoramento\nCapítulo 6: Deploy e Escalabilidade',
- 120.00, 520, '978-85-5555-111-9', '2026-01-10 16:45:00',
+ 100.00, 520, '978-85-5555-111-9', '2026-01-10 16:45:00',
  '550e8400-e29b-41d4-a716-446655442002', '550e8400-e29b-41d4-a716-446655443003'),
 
 ('550e8400-e29b-41d4-a716-446655444004',
