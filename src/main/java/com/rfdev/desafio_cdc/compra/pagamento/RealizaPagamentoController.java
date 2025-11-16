@@ -47,7 +47,7 @@ public class RealizaPagamentoController {
         binder.addValidators(estadoObrigatorioParaPaisValidator, estadoPertendeAoPaisValidator, totalCompraValidator);
     }
 
-    @PostMapping("/api/pagamentos")
+    @PostMapping("/api/compras")
     @Transactional
     public ResponseEntity<RealizaPagamentoResponse> realizaPagamento(@RequestBody @Valid RealizaPagamentoRequest request) {
         System.out.printf(request.toString());
