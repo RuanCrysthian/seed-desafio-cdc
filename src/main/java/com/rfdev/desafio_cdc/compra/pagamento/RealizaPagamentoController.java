@@ -5,6 +5,7 @@ import com.rfdev.desafio_cdc.compra.CompraRepository;
 import com.rfdev.desafio_cdc.config.EstadoObrigatorioParaPaisValidator;
 import com.rfdev.desafio_cdc.config.EstadoPertenceAoPaisValidator;
 import com.rfdev.desafio_cdc.config.TotalCompraValidator;
+import com.rfdev.desafio_cdc.cupom.CupomRepository;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.validation.Valid;
@@ -23,6 +24,7 @@ public class RealizaPagamentoController {
     private final EstadoPertenceAoPaisValidator estadoPertendeAoPaisValidator;
     private final TotalCompraValidator totalCompraValidator;
     private final CompraRepository compraRepository;
+    private final CupomRepository cupomRepository;
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -31,11 +33,13 @@ public class RealizaPagamentoController {
         EstadoObrigatorioParaPaisValidator estadoObrigatorioParaPaisValidator,
         EstadoPertenceAoPaisValidator estadoPertendeAoPaisValidator,
         TotalCompraValidator totalCompraValidator,
-        CompraRepository compraRepository) {
+        CompraRepository compraRepository,
+        CupomRepository cupomRepository) {
         this.estadoObrigatorioParaPaisValidator = estadoObrigatorioParaPaisValidator;
         this.estadoPertendeAoPaisValidator = estadoPertendeAoPaisValidator;
         this.totalCompraValidator = totalCompraValidator;
         this.compraRepository = compraRepository;
+        this.cupomRepository = cupomRepository;
     }
 
     @InitBinder
@@ -48,7 +52,7 @@ public class RealizaPagamentoController {
     public ResponseEntity<RealizaPagamentoResponse> realizaPagamento(@RequestBody @Valid RealizaPagamentoRequest request) {
         System.out.printf(request.toString());
 
-        Compra compra = request.toModel(entityManager);
+        Compra compra = request.toModel(entityManager, cupomRepository);
 
         compraRepository.save(compra);
 

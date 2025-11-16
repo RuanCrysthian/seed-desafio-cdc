@@ -44,4 +44,8 @@ public class Cupom {
         this.percentualDesconto = percentualDesconto;
         this.dataValidade = dataValidade;
     }
+
+    public Boolean estaValido() {
+        return this.dataValidade.isAfter(LocalDateTime.now());
+    }
 }
