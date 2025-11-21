@@ -1,12 +1,11 @@
 package com.rfdev.desafio_cdc.livro.cadastro;
 
 import com.rfdev.desafio_cdc.autor.Autor;
-import com.rfdev.desafio_cdc.autor.AutorRepository;
 import com.rfdev.desafio_cdc.categoria.Categoria;
-import com.rfdev.desafio_cdc.categoria.CategoriaRepository;
 import com.rfdev.desafio_cdc.config.CampoUnico;
 import com.rfdev.desafio_cdc.config.EntidadeExiste;
 import com.rfdev.desafio_cdc.livro.Livro;
+import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.constraints.*;
 
@@ -26,11 +25,15 @@ public record CadastroLivroRequest(
     @NotNull @EntidadeExiste(message = "Autor não encontrado", nomeTabela = Autor.class, nomeCampo = "id") UUID autorId
 ) {
 
-    public Livro toModel(CategoriaRepository categoriaRepository, AutorRepository autorRepository) {
-        Categoria categoria = categoriaRepository.findById(categoriaId)
-            .orElseThrow(() -> new EntityNotFoundException("Categoria não encontrada"));
-        Autor autor = autorRepository.findById(autorId)
-            .orElseThrow(() -> new EntityNotFoundException("Autor não encontrado"));
+    public Livro toModel(EntityManager entityManager) {
+        Categoria categoria = entityManager.find(Categoria.class, categoriaId);
+        if (categoria == null) {
+            throw new EntityNotFoundException("Categoria não encontrada");
+        }
+        Autor autor = entityManager.find(Autor.class, autorId);
+        if (autor == null) {
+            throw new EntityNotFoundException("Autor não encontrado");
+        }
         return new Livro(titulo, resumo, sumario, preco, numeroPaginas, isbn, dataPublicacao, categoria, autor);
     }
 }
