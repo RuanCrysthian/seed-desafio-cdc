@@ -7,23 +7,19 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
-import lombok.Data;
-import lombok.Getter;
 
 import java.util.UUID;
 
-@Data
-@Getter
-public class ItemCarrinhoRequest {
+public record ItemCarrinhoRequest(
 
     @NotNull
     @EntidadeExiste(message = "Livro não encontrado", nomeTabela = Livro.class, nomeCampo = "id")
-    private UUID idLivro;
+    UUID idLivro,
 
     @NotNull
     @Positive
-    private Integer quantidade;
-
+    Integer quantidade
+) {
     public PedidoItem toModel(EntityManager entityManager) {
         Livro livro = entityManager.find(Livro.class, this.idLivro);
         if (livro == null) {

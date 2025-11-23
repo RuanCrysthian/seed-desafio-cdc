@@ -29,16 +29,16 @@ public class TotalCompraValidator implements Validator {
 
         RealizaPagamentoRequest request = (RealizaPagamentoRequest) target;
 
-        if (request.getCarrinho().getTotal() != null) {
-            CarrinhoDeCompraRequest carrinho = request.getCarrinho();
-            var soma = carrinho.getItens().stream()
+        if (request.carrinho().total() != null) {
+            CarrinhoDeCompraRequest carrinho = request.carrinho();
+            var soma = carrinho.itens().stream()
                 .map(item -> {
-                    Livro livro = entityManager.find(Livro.class, item.getIdLivro());
-                    return livro.getPreco().multiply(new BigDecimal(item.getQuantidade()));
+                    Livro livro = entityManager.find(Livro.class, item.idLivro());
+                    return livro.getPreco().multiply(new BigDecimal(item.quantidade()));
                 })
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
 
-            if (soma.compareTo(carrinho.getTotal()) != 0) {
+            if (soma.compareTo(carrinho.total()) != 0) {
                 errors.rejectValue("carrinho.total", null, "O total informado não corresponde à soma dos itens no carrinho.");
             }
         }

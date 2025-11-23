@@ -8,67 +8,70 @@ import com.rfdev.desafio_cdc.cupom.CupomRepository;
 import com.rfdev.desafio_cdc.estado.Estado;
 import com.rfdev.desafio_cdc.pais.Pais;
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import lombok.Data;
-import lombok.Getter;
 
 import java.util.Optional;
 import java.util.UUID;
 
-@Data
-@Getter
-public class RealizaPagamentoRequest {
+
+public record RealizaPagamentoRequest(
 
     @NotBlank
     @Email
-    private String email;
+    String email,
 
     @NotBlank
-    private String nome;
+    String nome,
 
     @NotBlank
-    private String sobrenome;
+    String sobrenome,
 
     @NotBlank
     @Documento
-    private String documento;
+    String documento,
 
     @NotBlank
-    private String endereco;
+    String endereco,
 
     @NotBlank
-    private String complemento;
+    String complemento,
 
     @NotBlank
-    private String cidade;
+    String cidade,
 
     @NotNull
     @EntidadeExiste(message = "Pais não encontrado", nomeTabela = Pais.class, nomeCampo = "id")
-    private UUID paisId;
+    UUID paisId,
 
     @EntidadeExiste(message = "Estado não encontrado", nomeTabela = Estado.class, nomeCampo = "id")
-    private UUID estadoId;
+    UUID estadoId,
 
     @NotBlank
-    private String telefone;
+    String telefone,
 
     @NotBlank
-    private String cep;
+    String cep,
 
     @EntidadeExiste(message = "Cupom não encontrado", nomeTabela = Cupom.class, nomeCampo = "codigo")
-    private String cupomCodigo;
+    String cupomCodigo,
 
     @NotNull
     @Valid
-    private CarrinhoDeCompraRequest carrinho;
-
-
+    CarrinhoDeCompraRequest carrinho
+) {
     public Compra toModel(EntityManager entityManager, CupomRepository cupomRepository) {
         Pais pais = entityManager.find(Pais.class, this.paisId);
+        if (pais == null) {
+            throw new EntityNotFoundException("Pais não encontrado");
+        }
         Estado estado = this.estadoId != null ? entityManager.find(Estado.class, this.estadoId) : null;
+        if (pais.possuiEstados() && estado == null) {
+            throw new EntityNotFoundException("Estado obrigatório para o país selecionado");
+        }
 
         Optional<Cupom> cupom = cupomRepository.findByCodigo(this.cupomCodigo);
 
@@ -92,5 +95,4 @@ public class RealizaPagamentoRequest {
         }
         return compra;
     }
-
 }

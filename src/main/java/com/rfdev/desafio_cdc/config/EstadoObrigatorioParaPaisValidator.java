@@ -28,11 +28,11 @@ public class EstadoObrigatorioParaPaisValidator implements Validator {
 
         Long countEstados = entityManager.createQuery(
                 "SELECT COUNT(e) FROM Estado e WHERE e.pais.id = :paisId", Long.class)
-            .setParameter("paisId", request.getPaisId())
+            .setParameter("paisId", request.paisId())
             .getSingleResult();
 
         boolean paisTemEstados = countEstados > 0;
-        if (paisTemEstados && request.getEstadoId() == null) {
+        if (paisTemEstados && request.estadoId() == null) {
             errors.rejectValue("estadoId", null, "Estado é obrigatório para o país selecionado.");
         }
 

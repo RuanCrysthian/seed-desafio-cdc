@@ -7,25 +7,21 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
-import lombok.Data;
-import lombok.Getter;
 
 import java.math.BigDecimal;
 import java.util.List;
 
-@Data
-@Getter
-public class CarrinhoDeCompraRequest {
+public record CarrinhoDeCompraRequest(
 
     @NotNull
     @Positive
-    private BigDecimal total;
+    BigDecimal total,
 
     @Size(min = 1)
     @Valid
-    private List<ItemCarrinhoRequest> itens;
+    List<ItemCarrinhoRequest> itens
 
-
+) {
     public Pedido toModel(EntityManager entityManager) {
         List<PedidoItem> pedidoItens = itens.stream()
             .map(itemRequest -> itemRequest.toModel(entityManager))
