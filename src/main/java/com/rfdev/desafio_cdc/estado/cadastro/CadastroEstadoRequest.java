@@ -4,7 +4,8 @@ import com.rfdev.desafio_cdc.config.CampoUnico;
 import com.rfdev.desafio_cdc.config.EntidadeExiste;
 import com.rfdev.desafio_cdc.estado.Estado;
 import com.rfdev.desafio_cdc.pais.Pais;
-import com.rfdev.desafio_cdc.pais.PaisRepository;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
@@ -15,9 +16,13 @@ public record CadastroEstadoRequest(
     @NotNull @EntidadeExiste(message = "Pais não encontrado", nomeTabela = Pais.class, nomeCampo = "id") UUID paisId
 ) {
 
-    public Estado toModel(PaisRepository paisRepository) {
-        Pais pais = paisRepository.findById(paisId)
-            .orElseThrow(() -> new IllegalArgumentException("Pais não encontrado"));
-        return new Estado(nome, pais);
+    public Estado toModel(EntityManager entityManager) {
+        Pais pais = entityManager.find(Pais.class, paisId);
+        if (pais == null) {
+            throw new EntityNotFoundException("Pais não encontrado");
+        }
+        Estado estado = new Estado(nome, pais);
+        pais.adicionarEstado(estado);
+        return estado;
     }
 }
