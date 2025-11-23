@@ -1,7 +1,6 @@
 package com.rfdev.desafio_cdc.compra.pagamento;
 
 import com.rfdev.desafio_cdc.compra.Compra;
-import com.rfdev.desafio_cdc.compra.CompraRepository;
 import com.rfdev.desafio_cdc.config.EstadoObrigatorioParaPaisValidator;
 import com.rfdev.desafio_cdc.config.EstadoPertenceAoPaisValidator;
 import com.rfdev.desafio_cdc.config.TotalCompraValidator;
@@ -23,9 +22,7 @@ public class RealizaPagamentoController {
     private final EstadoObrigatorioParaPaisValidator estadoObrigatorioParaPaisValidator;
     private final EstadoPertenceAoPaisValidator estadoPertendeAoPaisValidator;
     private final TotalCompraValidator totalCompraValidator;
-    private final CompraRepository compraRepository;
     private final CupomRepository cupomRepository;
-
     @PersistenceContext
     private EntityManager entityManager;
 
@@ -33,12 +30,10 @@ public class RealizaPagamentoController {
         EstadoObrigatorioParaPaisValidator estadoObrigatorioParaPaisValidator,
         EstadoPertenceAoPaisValidator estadoPertendeAoPaisValidator,
         TotalCompraValidator totalCompraValidator,
-        CompraRepository compraRepository,
         CupomRepository cupomRepository) {
         this.estadoObrigatorioParaPaisValidator = estadoObrigatorioParaPaisValidator;
         this.estadoPertendeAoPaisValidator = estadoPertendeAoPaisValidator;
         this.totalCompraValidator = totalCompraValidator;
-        this.compraRepository = compraRepository;
         this.cupomRepository = cupomRepository;
     }
 
@@ -54,7 +49,7 @@ public class RealizaPagamentoController {
 
         Compra compra = request.toModel(entityManager, cupomRepository);
 
-        compraRepository.save(compra);
+        entityManager.persist(compra);
 
         return ResponseEntity.ok(RealizaPagamentoResponse.of(compra));
     }
