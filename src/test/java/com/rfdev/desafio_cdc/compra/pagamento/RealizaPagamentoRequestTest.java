@@ -108,7 +108,7 @@ class RealizaPagamentoRequestTest {
             realizaPagamentoRequest.toModel(entityManager, cupomRepository);
         });
     }
-    
+
     @Test
     void deveLancarExcecaoQuandoPaisNaoPossuirEstadosEEstadoIdForInformado() {
         Pais pais = new Pais("Pais Teste");
@@ -294,5 +294,60 @@ class RealizaPagamentoRequestTest {
             compra.calcularValorTotal());
     }
 
+    @Test
+    void deveLancarExcecaoQuandoTentarAplicarCupomJaAplicado() {
+        Pais pais = new Pais("Pais Teste");
+        Categoria categoria = new Categoria("Categoria Teste");
+        Autor autor = new Autor("Autor Teste", "autor.teste@emial.com", "Descricao do autor");
+        Livro livro = new Livro(
+            "Titulo Teste",
+            "Resumo do livro",
+            "Sumario do livro",
+            new BigDecimal("1000.00"),
+            150,
+            "ISBN-1234567890",
+            java.time.LocalDateTime.now().plusDays(1),
+            categoria,
+            autor
+        );
+        Cupom cupom = new Cupom("12345", new BigInteger("50"), java.time.LocalDateTime.now().plusDays(10));
+        int quantidadeLivros = 1;
+        Mockito.when(entityManager.find(Mockito.eq(Pais.class), Mockito.any()))
+            .thenReturn(pais);
+        Mockito.when(cupomRepository.findByCodigo("12345"))
+            .thenReturn(java.util.Optional.empty());
+        Mockito.when(entityManager.find(Mockito.eq(Livro.class), Mockito.any()))
+            .thenReturn(livro);
+        Mockito.when(cupomRepository.findByCodigo("12345"))
+            .thenReturn(Optional.of(cupom));
+
+        realizaPagamentoRequest = new RealizaPagamentoRequest(
+            "email@email.com",
+            "Nome",
+            "Sobrenome",
+            "12345678900",
+            "Endereco",
+            "Complemento",
+            "Cidade",
+            pais.getId(),
+            null,
+            "11999999999",
+            "12345000",
+            "12345",
+            new CarrinhoDeCompraRequest(
+                new BigDecimal("1000.00"),
+                List.of(new ItemCarrinhoRequest(UUID.randomUUID(), quantidadeLivros)))
+        );
+
+        Compra compra = realizaPagamentoRequest.toModel(entityManager, cupomRepository);
+        Cupom segundoCupom = new Cupom("CUPOM2", new BigInteger("20"), java.time.LocalDateTime.now().plusDays(10));
+
+        IllegalStateException exception = Assertions.assertThrows(
+            IllegalStateException.class,
+            () -> compra.aplicarCupom(segundoCupom)
+        );
+
+        Assertions.assertEquals("Cupom já foi aplicado nesta compra.", exception.getMessage());
+    }
 
 }
