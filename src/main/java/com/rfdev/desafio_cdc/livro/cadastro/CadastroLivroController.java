@@ -1,7 +1,6 @@
 package com.rfdev.desafio_cdc.livro.cadastro;
 
 import com.rfdev.desafio_cdc.livro.Livro;
-import com.rfdev.desafio_cdc.livro.LivroRepository;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.validation.Valid;
@@ -13,14 +12,10 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class CadastroLivroController {
 
-    private final LivroRepository livroRepository;
     @PersistenceContext
     private EntityManager entityManager;
 
-    public CadastroLivroController(
-        LivroRepository livroRepository,
-        EntityManager entityManager) {
-        this.livroRepository = livroRepository;
+    public CadastroLivroController(EntityManager entityManager) {
         this.entityManager = entityManager;
     }
 
@@ -28,7 +23,7 @@ public class CadastroLivroController {
     public ResponseEntity<CadastroLivroResponse> cadastrar(@RequestBody @Valid CadastroLivroRequest request) {
 
         Livro livro = request.toModel(entityManager);
-        livroRepository.save(livro);
+        entityManager.persist(livro);
 
         return ResponseEntity.ok(CadastroLivroResponse.of(livro));
     }

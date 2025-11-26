@@ -45,8 +45,6 @@ public class RealizaPagamentoController {
     @PostMapping("/api/compras")
     @Transactional
     public ResponseEntity<RealizaPagamentoResponse> realizaPagamento(@RequestBody @Valid RealizaPagamentoRequest request) {
-        System.out.printf(request.toString());
-
         Compra compra = request.toModel(entityManager, cupomRepository);
 
         entityManager.persist(compra);
