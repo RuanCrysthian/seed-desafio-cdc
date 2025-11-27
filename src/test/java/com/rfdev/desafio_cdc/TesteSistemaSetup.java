@@ -19,9 +19,10 @@ public abstract class TesteSistemaSetup {
 
     @AfterEach
     void cleanDatabase() {
-        entityManager.createNativeQuery("DELETE FROM pedido_itens").executeUpdate();
-        entityManager.createNativeQuery("DELETE FROM pedidos").executeUpdate();
+        entityManager.createNativeQuery("DELETE FROM pedidos_itens").executeUpdate();
         entityManager.createNativeQuery("DELETE FROM compras").executeUpdate();
+        entityManager.createNativeQuery("DELETE FROM pedidos").executeUpdate();
+        entityManager.createNativeQuery("DELETE FROM pedido_itens").executeUpdate();
         entityManager.createNativeQuery("DELETE FROM cupons").executeUpdate();
         entityManager.createNativeQuery("DELETE FROM livros").executeUpdate();
         entityManager.createNativeQuery("DELETE FROM autores").executeUpdate();
