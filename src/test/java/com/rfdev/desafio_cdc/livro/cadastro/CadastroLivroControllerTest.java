@@ -1,7 +1,7 @@
 package com.rfdev.desafio_cdc.livro.cadastro;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.rfdev.desafio_cdc.TesteSistemaSetup;
+import com.rfdev.desafio_cdc.TesteApiSetup;
 import com.rfdev.desafio_cdc.autor.Autor;
 import com.rfdev.desafio_cdc.categoria.Categoria;
 import org.junit.jupiter.api.Assertions;
@@ -19,7 +19,7 @@ import java.util.UUID;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-class CadastroLivroControllerTest extends TesteSistemaSetup {
+class CadastroLivroControllerTest extends TesteApiSetup {
 
     @Autowired
     private WebApplicationContext webApplicationContext;

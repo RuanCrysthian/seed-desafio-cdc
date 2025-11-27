@@ -8,7 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Transactional
-public abstract class TesteSistemaSetup {
+public abstract class TesteApiSetup {
 
     static {
         DatabaseTest.isRunning();

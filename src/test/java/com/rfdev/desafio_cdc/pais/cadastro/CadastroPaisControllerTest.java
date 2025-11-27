@@ -1,7 +1,7 @@
 package com.rfdev.desafio_cdc.pais.cadastro;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.rfdev.desafio_cdc.TesteSistemaSetup;
+import com.rfdev.desafio_cdc.TesteApiSetup;
 import com.rfdev.desafio_cdc.pais.Pais;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-class CadastroPaisControllerTest extends TesteSistemaSetup {
+class CadastroPaisControllerTest extends TesteApiSetup {
 
     @Autowired
     private WebApplicationContext webApplicationContext;

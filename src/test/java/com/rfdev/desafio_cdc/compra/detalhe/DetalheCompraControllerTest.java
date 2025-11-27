@@ -1,6 +1,6 @@
 package com.rfdev.desafio_cdc.compra.detalhe;
 
-import com.rfdev.desafio_cdc.TesteSistemaSetup;
+import com.rfdev.desafio_cdc.TesteApiSetup;
 import com.rfdev.desafio_cdc.autor.Autor;
 import com.rfdev.desafio_cdc.categoria.Categoria;
 import com.rfdev.desafio_cdc.compra.Compra;
@@ -27,7 +27,7 @@ import java.util.UUID;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-class DetalheCompraControllerTest extends TesteSistemaSetup {
+class DetalheCompraControllerTest extends TesteApiSetup {
 
     @Autowired
     private WebApplicationContext webApplicationContext;

@@ -1,7 +1,7 @@
 package com.rfdev.desafio_cdc.compra.pagamento;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.rfdev.desafio_cdc.TesteSistemaSetup;
+import com.rfdev.desafio_cdc.TesteApiSetup;
 import com.rfdev.desafio_cdc.autor.Autor;
 import com.rfdev.desafio_cdc.categoria.Categoria;
 import com.rfdev.desafio_cdc.cupom.Cupom;
@@ -26,7 +26,7 @@ import java.util.UUID;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-class RealizaPagamentoControllerTest extends TesteSistemaSetup {
+class RealizaPagamentoControllerTest extends TesteApiSetup {
 
     @Autowired
     private WebApplicationContext webApplicationContext;
