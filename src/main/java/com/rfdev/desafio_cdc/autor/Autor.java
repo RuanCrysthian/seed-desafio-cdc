@@ -1,15 +1,19 @@
 package com.rfdev.desafio_cdc.autor;
 
-import com.rfdev.desafio_cdc.config.CampoUnico;
-import jakarta.persistence.*;
+import java.time.LocalDateTime;
+import java.util.UUID;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
-
-import java.time.LocalDateTime;
-import java.util.UUID;
 
 @Entity
 @Getter
@@ -47,8 +51,5 @@ public class Autor {
         this.email = email;
         this.descricao = descricao;
     }
-
-
-
 
 }

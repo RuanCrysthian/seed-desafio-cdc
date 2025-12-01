@@ -1,13 +1,21 @@
 package com.rfdev.desafio_cdc.pais;
 
-import com.rfdev.desafio_cdc.estado.Estado;
-import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
-import lombok.Getter;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+
+import com.rfdev.desafio_cdc.estado.Estado;
+
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotBlank;
+import lombok.Getter;
 
 @Entity
 @Table(name = "paises")
@@ -35,6 +43,9 @@ public class Pais {
     }
 
     public void adicionarEstado(Estado estado) {
+        if (estado.getPais() != this) {
+            throw new IllegalArgumentException("Estado pertence a outro país");
+        }
         estados.add(estado);
     }
 

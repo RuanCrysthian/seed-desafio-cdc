@@ -1,22 +1,25 @@
 package com.rfdev.desafio_cdc.cupom.cadastro;
 
-import com.rfdev.desafio_cdc.cupom.Cupom;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
-import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.rfdev.desafio_cdc.cupom.Cupom;
+
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.validation.Valid;
+
 @RestController
 public class CadastroCupomController {
 
     @PersistenceContext
-    private EntityManager entityManager;
+    private final EntityManager entityManager;
 
-    public CadastroCupomController() {
+    public CadastroCupomController(EntityManager entityManager) {
+        this.entityManager = entityManager;
     }
 
     @PostMapping("api/cupons")

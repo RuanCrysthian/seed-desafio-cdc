@@ -1,15 +1,12 @@
 package com.rfdev.desafio_cdc.compra.pagamento;
 
-import com.rfdev.desafio_cdc.autor.Autor;
-import com.rfdev.desafio_cdc.categoria.Categoria;
-import com.rfdev.desafio_cdc.compra.Compra;
-import com.rfdev.desafio_cdc.cupom.Cupom;
-import com.rfdev.desafio_cdc.cupom.CupomRepository;
-import com.rfdev.desafio_cdc.estado.Estado;
-import com.rfdev.desafio_cdc.livro.Livro;
-import com.rfdev.desafio_cdc.pais.Pais;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.EntityNotFoundException;
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.math.RoundingMode;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
+
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -18,12 +15,17 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.math.BigDecimal;
-import java.math.BigInteger;
-import java.math.RoundingMode;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import com.rfdev.desafio_cdc.autor.Autor;
+import com.rfdev.desafio_cdc.categoria.Categoria;
+import com.rfdev.desafio_cdc.compra.Compra;
+import com.rfdev.desafio_cdc.cupom.Cupom;
+import com.rfdev.desafio_cdc.cupom.CupomRepository;
+import com.rfdev.desafio_cdc.estado.Estado;
+import com.rfdev.desafio_cdc.livro.Livro;
+import com.rfdev.desafio_cdc.pais.Pais;
+
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityNotFoundException;
 
 @ExtendWith(MockitoExtension.class)
 class RealizaPagamentoRequestTest {
@@ -40,7 +42,7 @@ class RealizaPagamentoRequestTest {
     @Test
     void deveLancarExcecaoQuandoPaisNaoExistir() {
         Mockito.when(entityManager.find(Mockito.eq(Pais.class), Mockito.any()))
-            .thenReturn(null);
+                .thenReturn(null);
 
         Assertions.assertThrows(EntityNotFoundException.class, () -> {
             realizaPagamentoRequest.toModel(entityManager, cupomRepository);
@@ -54,25 +56,25 @@ class RealizaPagamentoRequestTest {
         pais.adicionarEstado(estado);
 
         Mockito.when(entityManager.find(Mockito.eq(Pais.class), Mockito.any()))
-            .thenReturn(pais);
+                .thenReturn(pais);
         Mockito.when(entityManager.find(Mockito.eq(Estado.class), Mockito.any()))
-            .thenReturn(null);
+                .thenReturn(null);
 
         realizaPagamentoRequest = new RealizaPagamentoRequest(
-            "email@email.com",
-            "Nome",
-            "Sobrenome",
-            "12345678900",
-            "Endereco",
-            "Complemento",
-            "Cidade",
-            pais.getId(),
-            UUID.randomUUID(),
-            "11999999999",
-            "12345000",
-            null,
-            new CarrinhoDeCompraRequest(new BigDecimal("1000.00"), List.of(new ItemCarrinhoRequest(UUID.randomUUID(), 1)))
-        );
+                "email@email.com",
+                "Nome",
+                "Sobrenome",
+                "12345678900",
+                "Endereco",
+                "Complemento",
+                "Cidade",
+                pais.getId(),
+                UUID.randomUUID(),
+                "11999999999",
+                "12345000",
+                null,
+                new CarrinhoDeCompraRequest(new BigDecimal("1000.00"),
+                        List.of(new ItemCarrinhoRequest(UUID.randomUUID(), 1))));
 
         Assertions.assertThrows(EntityNotFoundException.class, () -> {
             realizaPagamentoRequest.toModel(entityManager, cupomRepository);
@@ -86,27 +88,40 @@ class RealizaPagamentoRequestTest {
         pais.adicionarEstado(estado);
 
         Mockito.when(entityManager.find(Mockito.eq(Pais.class), Mockito.any()))
-            .thenReturn(pais);
+                .thenReturn(pais);
 
         realizaPagamentoRequest = new RealizaPagamentoRequest(
-            "email@email.com",
-            "Nome",
-            "Sobrenome",
-            "12345678900",
-            "Endereco",
-            "Complemento",
-            "Cidade",
-            pais.getId(),
-            null,
-            "11999999999",
-            "12345000",
-            null,
-            new CarrinhoDeCompraRequest(new BigDecimal("1000.00"), List.of(new ItemCarrinhoRequest(UUID.randomUUID(), 1)))
-        );
+                "email@email.com",
+                "Nome",
+                "Sobrenome",
+                "12345678900",
+                "Endereco",
+                "Complemento",
+                "Cidade",
+                pais.getId(),
+                null,
+                "11999999999",
+                "12345000",
+                null,
+                new CarrinhoDeCompraRequest(new BigDecimal("1000.00"),
+                        List.of(new ItemCarrinhoRequest(UUID.randomUUID(), 1))));
 
         Assertions.assertThrows(EntityNotFoundException.class, () -> {
             realizaPagamentoRequest.toModel(entityManager, cupomRepository);
         });
+    }
+
+    @Test
+    void deveLancarExcecaoQuandoAdicionarEstadoDeOutroPais() {
+        Pais pais1 = new Pais("Pais 1");
+        Pais pais2 = new Pais("Pais 2");
+        Estado estado = new Estado("Estado Teste", pais1);
+
+        IllegalArgumentException exception = Assertions.assertThrows(
+                IllegalArgumentException.class,
+                () -> pais2.adicionarEstado(estado));
+
+        Assertions.assertEquals("Estado pertence a outro país", exception.getMessage());
     }
 
     @Test
@@ -116,30 +131,29 @@ class RealizaPagamentoRequestTest {
         Estado estado = new Estado("Estado Teste", pais);
 
         Mockito.when(entityManager.find(Mockito.eq(Pais.class), Mockito.any()))
-            .thenReturn(paisSemEstado);
+                .thenReturn(paisSemEstado);
         Mockito.when(entityManager.find(Mockito.eq(Estado.class), Mockito.any()))
-            .thenReturn(estado);
+                .thenReturn(estado);
 
         realizaPagamentoRequest = new RealizaPagamentoRequest(
-            "email@email.com",
-            "Nome",
-            "Sobrenome",
-            "12345678900",
-            "Endereco",
-            "Complemento",
-            "Cidade",
-            paisSemEstado.getId(),
-            UUID.randomUUID(),
-            "11999999999",
-            "12345000",
-            null,
-            new CarrinhoDeCompraRequest(new BigDecimal("1000.00"), List.of(new ItemCarrinhoRequest(UUID.randomUUID(), 1)))
-        );
+                "email@email.com",
+                "Nome",
+                "Sobrenome",
+                "12345678900",
+                "Endereco",
+                "Complemento",
+                "Cidade",
+                paisSemEstado.getId(),
+                UUID.randomUUID(),
+                "11999999999",
+                "12345000",
+                null,
+                new CarrinhoDeCompraRequest(new BigDecimal("1000.00"),
+                        List.of(new ItemCarrinhoRequest(UUID.randomUUID(), 1))));
 
         Assertions.assertThrows(EntityNotFoundException.class, () -> {
             realizaPagamentoRequest.toModel(entityManager, cupomRepository);
         });
-
     }
 
     @Test
@@ -148,46 +162,45 @@ class RealizaPagamentoRequestTest {
         Categoria categoria = new Categoria("Categoria Teste");
         Autor autor = new Autor("Autor Teste", "autor.teste@emial.com", "Descricao do autor");
         Livro livro = new Livro(
-            "Titulo Teste",
-            "Resumo do livro",
-            "Sumario do livro",
-            new BigDecimal("1000.00"),
-            150,
-            "ISBN-1234567890",
-            java.time.LocalDateTime.now().plusDays(1),
-            categoria,
-            autor
-        );
+                "Titulo Teste",
+                "Resumo do livro",
+                "Sumario do livro",
+                new BigDecimal("1000.00"),
+                150,
+                "ISBN-1234567890",
+                java.time.LocalDateTime.now().plusDays(1),
+                categoria,
+                autor);
         int quantidadeLivros = 1;
         Mockito.when(entityManager.find(Mockito.eq(Pais.class), Mockito.any()))
-            .thenReturn(pais);
+                .thenReturn(pais);
         Mockito.when(cupomRepository.findByCodigo("12345"))
-            .thenReturn(java.util.Optional.empty());
+                .thenReturn(java.util.Optional.empty());
         Mockito.when(entityManager.find(Mockito.eq(Livro.class), Mockito.any()))
-            .thenReturn(livro);
+                .thenReturn(livro);
 
         realizaPagamentoRequest = new RealizaPagamentoRequest(
-            "email@email.com",
-            "Nome",
-            "Sobrenome",
-            "12345678900",
-            "Endereco",
-            "Complemento",
-            "Cidade",
-            pais.getId(),
-            null,
-            "11999999999",
-            "12345000",
-            "12345",
-            new CarrinhoDeCompraRequest(
-                new BigDecimal("1000.00"),
-                List.of(new ItemCarrinhoRequest(UUID.randomUUID(), quantidadeLivros)))
-        );
+                "email@email.com",
+                "Nome",
+                "Sobrenome",
+                "12345678900",
+                "Endereco",
+                "Complemento",
+                "Cidade",
+                pais.getId(),
+                null,
+                "11999999999",
+                "12345000",
+                "12345",
+                new CarrinhoDeCompraRequest(
+                        new BigDecimal("1000.00"),
+                        List.of(new ItemCarrinhoRequest(UUID.randomUUID(), quantidadeLivros))));
 
         Compra compra = realizaPagamentoRequest.toModel(entityManager, cupomRepository);
 
         Assertions.assertNull(compra.getCupom());
-        Assertions.assertEquals(livro.getPreco().multiply(new BigDecimal(quantidadeLivros)), compra.calcularValorTotal());
+        Assertions.assertEquals(livro.getPreco().multiply(new BigDecimal(quantidadeLivros)),
+                compra.calcularValorTotal());
     }
 
     @Test
@@ -196,49 +209,48 @@ class RealizaPagamentoRequestTest {
         Categoria categoria = new Categoria("Categoria Teste");
         Autor autor = new Autor("Autor Teste", "autor.teste@emial.com", "Descricao do autor");
         Livro livro = new Livro(
-            "Titulo Teste",
-            "Resumo do livro",
-            "Sumario do livro",
-            new BigDecimal("1000.00"),
-            150,
-            "ISBN-1234567890",
-            java.time.LocalDateTime.now().plusDays(1),
-            categoria,
-            autor
-        );
+                "Titulo Teste",
+                "Resumo do livro",
+                "Sumario do livro",
+                new BigDecimal("1000.00"),
+                150,
+                "ISBN-1234567890",
+                java.time.LocalDateTime.now().plusDays(1),
+                categoria,
+                autor);
         Cupom cupom = new Cupom("12345", new BigInteger("50"), java.time.LocalDateTime.now().minusDays(10));
         int quantidadeLivros = 1;
         Mockito.when(entityManager.find(Mockito.eq(Pais.class), Mockito.any()))
-            .thenReturn(pais);
+                .thenReturn(pais);
         Mockito.when(cupomRepository.findByCodigo("12345"))
-            .thenReturn(java.util.Optional.empty());
+                .thenReturn(java.util.Optional.empty());
         Mockito.when(entityManager.find(Mockito.eq(Livro.class), Mockito.any()))
-            .thenReturn(livro);
+                .thenReturn(livro);
         Mockito.when(cupomRepository.findByCodigo("12345"))
-            .thenReturn(Optional.of(cupom));
+                .thenReturn(Optional.of(cupom));
 
         realizaPagamentoRequest = new RealizaPagamentoRequest(
-            "email@email.com",
-            "Nome",
-            "Sobrenome",
-            "12345678900",
-            "Endereco",
-            "Complemento",
-            "Cidade",
-            pais.getId(),
-            null,
-            "11999999999",
-            "12345000",
-            "12345",
-            new CarrinhoDeCompraRequest(
-                new BigDecimal("1000.00"),
-                List.of(new ItemCarrinhoRequest(UUID.randomUUID(), quantidadeLivros)))
-        );
+                "email@email.com",
+                "Nome",
+                "Sobrenome",
+                "12345678900",
+                "Endereco",
+                "Complemento",
+                "Cidade",
+                pais.getId(),
+                null,
+                "11999999999",
+                "12345000",
+                "12345",
+                new CarrinhoDeCompraRequest(
+                        new BigDecimal("1000.00"),
+                        List.of(new ItemCarrinhoRequest(UUID.randomUUID(), quantidadeLivros))));
 
         Compra compra = realizaPagamentoRequest.toModel(entityManager, cupomRepository);
 
         Assertions.assertNull(compra.getCupom());
-        Assertions.assertEquals(livro.getPreco().multiply(new BigDecimal(quantidadeLivros)), compra.calcularValorTotal());
+        Assertions.assertEquals(livro.getPreco().multiply(new BigDecimal(quantidadeLivros)),
+                compra.calcularValorTotal());
     }
 
     @Test
@@ -247,51 +259,50 @@ class RealizaPagamentoRequestTest {
         Categoria categoria = new Categoria("Categoria Teste");
         Autor autor = new Autor("Autor Teste", "autor.teste@emial.com", "Descricao do autor");
         Livro livro = new Livro(
-            "Titulo Teste",
-            "Resumo do livro",
-            "Sumario do livro",
-            new BigDecimal("1000.00"),
-            150,
-            "ISBN-1234567890",
-            java.time.LocalDateTime.now().plusDays(1),
-            categoria,
-            autor
-        );
+                "Titulo Teste",
+                "Resumo do livro",
+                "Sumario do livro",
+                new BigDecimal("1000.00"),
+                150,
+                "ISBN-1234567890",
+                java.time.LocalDateTime.now().plusDays(1),
+                categoria,
+                autor);
         Cupom cupom = new Cupom("12345", new BigInteger("50"), java.time.LocalDateTime.now().plusDays(10));
         int quantidadeLivros = 1;
         Mockito.when(entityManager.find(Mockito.eq(Pais.class), Mockito.any()))
-            .thenReturn(pais);
+                .thenReturn(pais);
         Mockito.when(cupomRepository.findByCodigo("12345"))
-            .thenReturn(java.util.Optional.empty());
+                .thenReturn(java.util.Optional.empty());
         Mockito.when(entityManager.find(Mockito.eq(Livro.class), Mockito.any()))
-            .thenReturn(livro);
+                .thenReturn(livro);
         Mockito.when(cupomRepository.findByCodigo("12345"))
-            .thenReturn(Optional.of(cupom));
+                .thenReturn(Optional.of(cupom));
 
         realizaPagamentoRequest = new RealizaPagamentoRequest(
-            "email@email.com",
-            "Nome",
-            "Sobrenome",
-            "12345678900",
-            "Endereco",
-            "Complemento",
-            "Cidade",
-            pais.getId(),
-            null,
-            "11999999999",
-            "12345000",
-            "12345",
-            new CarrinhoDeCompraRequest(
-                new BigDecimal("1000.00"),
-                List.of(new ItemCarrinhoRequest(UUID.randomUUID(), quantidadeLivros)))
-        );
+                "email@email.com",
+                "Nome",
+                "Sobrenome",
+                "12345678900",
+                "Endereco",
+                "Complemento",
+                "Cidade",
+                pais.getId(),
+                null,
+                "11999999999",
+                "12345000",
+                "12345",
+                new CarrinhoDeCompraRequest(
+                        new BigDecimal("1000.00"),
+                        List.of(new ItemCarrinhoRequest(UUID.randomUUID(), quantidadeLivros))));
 
         Compra compra = realizaPagamentoRequest.toModel(entityManager, cupomRepository);
 
         Assertions.assertNotNull(compra.getCupom());
         Assertions.assertEquals(
-            livro.getPreco().multiply(new BigDecimal(quantidadeLivros)).divide(new BigDecimal("2"), RoundingMode.CEILING),
-            compra.calcularValorTotal());
+                livro.getPreco().multiply(new BigDecimal(quantidadeLivros)).divide(new BigDecimal("2"),
+                        RoundingMode.CEILING),
+                compra.calcularValorTotal());
     }
 
     @Test
@@ -300,52 +311,49 @@ class RealizaPagamentoRequestTest {
         Categoria categoria = new Categoria("Categoria Teste");
         Autor autor = new Autor("Autor Teste", "autor.teste@emial.com", "Descricao do autor");
         Livro livro = new Livro(
-            "Titulo Teste",
-            "Resumo do livro",
-            "Sumario do livro",
-            new BigDecimal("1000.00"),
-            150,
-            "ISBN-1234567890",
-            java.time.LocalDateTime.now().plusDays(1),
-            categoria,
-            autor
-        );
+                "Titulo Teste",
+                "Resumo do livro",
+                "Sumario do livro",
+                new BigDecimal("1000.00"),
+                150,
+                "ISBN-1234567890",
+                java.time.LocalDateTime.now().plusDays(1),
+                categoria,
+                autor);
         Cupom cupom = new Cupom("12345", new BigInteger("50"), java.time.LocalDateTime.now().plusDays(10));
         int quantidadeLivros = 1;
         Mockito.when(entityManager.find(Mockito.eq(Pais.class), Mockito.any()))
-            .thenReturn(pais);
+                .thenReturn(pais);
         Mockito.when(cupomRepository.findByCodigo("12345"))
-            .thenReturn(java.util.Optional.empty());
+                .thenReturn(java.util.Optional.empty());
         Mockito.when(entityManager.find(Mockito.eq(Livro.class), Mockito.any()))
-            .thenReturn(livro);
+                .thenReturn(livro);
         Mockito.when(cupomRepository.findByCodigo("12345"))
-            .thenReturn(Optional.of(cupom));
+                .thenReturn(Optional.of(cupom));
 
         realizaPagamentoRequest = new RealizaPagamentoRequest(
-            "email@email.com",
-            "Nome",
-            "Sobrenome",
-            "12345678900",
-            "Endereco",
-            "Complemento",
-            "Cidade",
-            pais.getId(),
-            null,
-            "11999999999",
-            "12345000",
-            "12345",
-            new CarrinhoDeCompraRequest(
-                new BigDecimal("1000.00"),
-                List.of(new ItemCarrinhoRequest(UUID.randomUUID(), quantidadeLivros)))
-        );
+                "email@email.com",
+                "Nome",
+                "Sobrenome",
+                "12345678900",
+                "Endereco",
+                "Complemento",
+                "Cidade",
+                pais.getId(),
+                null,
+                "11999999999",
+                "12345000",
+                "12345",
+                new CarrinhoDeCompraRequest(
+                        new BigDecimal("1000.00"),
+                        List.of(new ItemCarrinhoRequest(UUID.randomUUID(), quantidadeLivros))));
 
         Compra compra = realizaPagamentoRequest.toModel(entityManager, cupomRepository);
         Cupom segundoCupom = new Cupom("CUPOM2", new BigInteger("20"), java.time.LocalDateTime.now().plusDays(10));
 
         IllegalStateException exception = Assertions.assertThrows(
-            IllegalStateException.class,
-            () -> compra.aplicarCupom(segundoCupom)
-        );
+                IllegalStateException.class,
+                () -> compra.aplicarCupom(segundoCupom));
 
         Assertions.assertEquals("Cupom já foi aplicado nesta compra.", exception.getMessage());
     }

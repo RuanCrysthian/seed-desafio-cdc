@@ -27,12 +27,9 @@ public class CampoUnicoValidator implements ConstraintValidator<CampoUnico, Obje
             return true;
         }
 
-        String jpql = String.format(
-            "SELECT COUNT(e) FROM %s e WHERE e.%s = :value",
-            nomeTabela.getSimpleName(), nomeCampo
-        );
-
-        Query query = entityManager.createQuery("SELECT COUNT(e) FROM " + nomeTabela.getSimpleName() + " e WHERE e." + nomeCampo + " = :value", Long.class);
+        Query query = entityManager.createQuery(
+                "SELECT COUNT(e) FROM " + nomeTabela.getSimpleName() + " e WHERE e." + nomeCampo + " = :value",
+                Long.class);
         query.setParameter("value", value);
         Long count = (Long) query.getSingleResult();
 
