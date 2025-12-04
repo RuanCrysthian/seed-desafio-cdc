@@ -1,5 +1,6 @@
 package com.rfdev.desafio_cdc;
 
+import org.junit.jupiter.api.AfterAll;
 import org.testcontainers.containers.PostgreSQLContainer;
 
 public class DatabaseTest {
@@ -8,10 +9,10 @@ public class DatabaseTest {
 
     static {
         CONTAINER = new PostgreSQLContainer<>("postgres:15-alpine")
-            .withDatabaseName("testdb")
-            .withUsername("test")
-            .withPassword("test")
-            .withReuse(true);
+                .withDatabaseName("testdb")
+                .withUsername("test")
+                .withPassword("test")
+                .withReuse(true);
 
         CONTAINER.start();
 
@@ -23,6 +24,13 @@ public class DatabaseTest {
         System.setProperty("spring.jpa.hibernate.ddl-auto", "create-drop");
         System.setProperty("spring.jpa.database-platform", "org.hibernate.dialect.PostgreSQLDialect");
         System.setProperty("spring.jpa.properties.hibernate.dialect", "org.hibernate.dialect.PostgreSQLDialect");
+    }
+
+    @AfterAll
+    static void tearDown() {
+        if (CONTAINER != null) {
+            CONTAINER.stop();
+        }
     }
 
     public static boolean isRunning() {
